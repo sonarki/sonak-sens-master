@@ -123,6 +123,12 @@
     .explain h2 {
       margin-bottom: 8px;
     }
+    .disclaimer {
+      font-size: 0.9rem;
+      color: #e53e3e;
+      margin-top: 10px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -164,13 +170,13 @@
     <div class="panel">
       <h2>🔄 체감 보정 단일 변환</h2>
       <label for="baseVertical">기존 수직 감도</label>
-      <input type="number" id="baseVertical" value="1.0" step="0.01">
+      <input type="number" id="baseVertical" value="0.9" step="0.01">
 
       <label for="newVertical">새로운 수직 감도</label>
       <input type="number" id="newVertical" value="1.2" step="0.01">
 
       <label for="baseScope">기존 스코프 감도</label>
-      <input type="number" id="baseScope" value="50">
+      <input type="number" id="baseScope" value="18">
 
       <button onclick="calcPerc()" aria-label="체감 보정 변환 계산">계산</button>
       <div id="percResult"></div>
@@ -183,11 +189,12 @@
       새감도 = max(1, 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이])<br>
       예시: 기준 DPI 400 → 변경 DPI 800, 기준감도 50, 차이 15 → <strong>max(1, 50 – (1 × 15)) = 35</strong></p>
       <p><strong>체감 보정 변환</strong><br>
-      새로운 스코프 감도 = 기존 스코프 감도 × (기존 수직 감도 ÷ 새로운 수직 감도)<br>
-      예시: 기존 수직 1.0 → 새로운 수직 1.2, 기존 스코프 50 → <strong>50 × (1.0 ÷ 1.2) = 41.67</strong></p>
+      비율 = (기존 수직 감도 ÷ 새로운 수직 감도) × 0.8 + 0.2 (가중치 적용)<br>
+      새로운 스코프 감도 = 기존 스코프 감도 × 비율<br>
+      예시: 기존 수직 0.9 → 새로운 수직 1.2, 기존 스코프 18 → 비율: (0.9 ÷ 1.2) × 0.8 + 0.2 = 0.8 → <strong>18 × 0.8 = 14.40</strong></p>
       <h2>📜 계산 원리 근거</h2>
       <p><strong>실감형 감도:</strong> FPS 게임에서 DPI 변경 시 체감 감도를 일정하게 유지하기 위해 사용됩니다. PUBG 커뮤니티에서 DPI가 2배 증가할 때 감도가 약 15 감소해야 체감이 유지된다는 경험적 데이터에 기반합니다 (참고: Reddit r/PUBATTLEGROUNDS).</p>
-      <p><strong>체감 보정 변환:</strong> 수직 감도 변경 시 조준 느낌을 일정하게 유지하기 위해 스코프 감도를 비례적으로 조정합니다. 이는 Aim Lab과 같은 감도 변환 도구에서 유사하게 사용되는 방식입니다.</p>
+      <p><strong>체감 보정 변환:</strong> 수직 감도 변경 시 조준 느낌을 일정하게 유지하기 위해 스코프 감도를 조정합니다. 실전 테스트를 반영해 가중치 0.8을 적용했으며, 이는 스코프 모드에서 수직 움직임의 비중이 일반 조준보다 낮음을 고려한 값입니다.</p>
       <h2>🕰️ 감도 설정의 역사</h2>
       <p>- 1990년대 후반: Quake와 같은 초기 FPS 게임에서 마우스 감도 설정이 중요해짐.<br>
       - 2000년대: Counter-Strike에서 감도 조정이 체계화.<br>
@@ -201,6 +208,7 @@
   <script>
     const DPIs = [400, 800, 1200, 1600, 3200];
     const OCTAVE_DIFF = 15; // 기본 옥타브당 감도 차이
+    const SCOPE_WEIGHT = 0.8; // 스코프 감도 가중치
 
     function calcReal() {
       const b = parseFloat(document.getElementById('realBaseDPI').value);
@@ -239,9 +247,10 @@
         alert('모든 값은 0보다 큰 숫자여야 합니다.');
         return;
       }
-      const ratio = baseVertical / newVertical;
+      const baseRatio = baseVertical / newVertical;
+      const ratio = baseRatio * SCOPE_WEIGHT + (1 - SCOPE_WEIGHT);
       const newScope = Math.max(1, (baseScope * ratio)).toFixed(2);
-      const resultHtml = `<p>수직 감도 비율: ${(ratio).toFixed(4)}</p><p>새로운 스코프 감도: ${newScope}</p>`;
+      const resultHtml = `<p>수직 감도 비율: ${(ratio).toFixed(4)}</p><p>새로운 스코프 감도: ${newScope}</p><p class="disclaimer">참고: 본 계산 결과는 수직 감도와 스코프 감도 간의 관계를 기반으로 한 체감 보정 값입니다. 다만, 게임 내 환경, 개인의 체감 차이, 기타 설정에 따라 기존 조준 느낌과 다를 수 있으니 실전 테스트를 통해 최적의 값을 조정하시기 바랍니다.</p>`;
       document.getElementById('percResult').innerHTML = resultHtml + '<button class="copy-btn" onclick="copyPercResult()">결과 복사</button>';
     }
 

@@ -2,20 +2,106 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v6.3</title>
+  <title>소낙의 감도사 🎯 v6.3</title>
   <style>
-    body { font-family: 'Pretendard', sans-serif; background: #f5f5f5; margin: 0; padding: 0; }
-    header { background: #333; color: #fff; padding: 20px; text-align: center; }
-    main { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; padding: 20px; max-width: 1200px; margin: auto; }
-    .panel { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
-    label { display: block; font-weight: bold; margin-top: 10px; }
-    input, select, button { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
-    button { background: #333; color: #fff; border: none; cursor: pointer; font-weight: bold; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background: #f2f2f2; }
-    .explain { font-size: 14px; color: #555; }
+    body {
+      font-family: 'Pretendard', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #334155;
+      color: #fff;
+      padding: 24px 0;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.75rem;
+    }
+    header p {
+      margin: 8px 0 0;
+      color: #cbd5e1;
+      font-size: 1rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 24px auto;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+    }
+    .panel {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .panel h2 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel label {
+      display: block;
+      margin-top: 12px;
+      font-weight: 600;
+      color: #334155;
+    }
+    .panel input,
+    .panel select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 6px;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: #334155;
+    }
+    .panel button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 16px;
+      background-color: #334155;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid #e2e8f0;
+      padding: 8px;
+      text-align: center;
+      color: #334155;
+    }
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+    }
+    .full-width {
+      grid-column: 1 / -1;
+    }
+    .explain {
+      font-size: 0.95rem;
+      color: #475569;
+      line-height: 1.5;
+    }
+    .explain h2 {
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -23,10 +109,12 @@
     <h1>소낙의 감도사 🎯 v6.3</h1>
     <p>실감형 감도 테이블 + 체감 보정 단일 변환</p>
   </header>
-  <main>
+
+  <div class="container">
+    <!-- 실감형 감도 테이블 -->
     <div class="panel">
       <h2>📊 실감형 감도 테이블</h2>
-      <label>기준 DPI</label>
+      <label for="realBaseDPI">기준 DPI</label>
       <select id="realBaseDPI">
         <option value="400">400</option>
         <option value="800" selected>800</option>
@@ -34,16 +122,27 @@
         <option value="1600">1600</option>
         <option value="3200">3200</option>
       </select>
-      <label>일반 감도</label><input type="number" id="realGeneral" placeholder="예: 46">
-      <label>조준 감도</label><input type="number" id="realAim" placeholder="예: 44">
-      <label>스코프 감도</label><input type="number" id="realScope" placeholder="예: 36">
-      <label>수직 감도</label><input type="number" id="realVertical" placeholder="예: 0.90">
+
+      <label for="realGeneral">일반 감도</label>
+      <input type="number" id="realGeneral" placeholder="예: 46">
+
+      <label for="realAim">조준 감도</label>
+      <input type="number" id="realAim" placeholder="예: 44">
+
+      <label for="realScope">스코프 감도</label>
+      <input type="number" id="realScope" placeholder="예: 36">
+
+      <label for="realVertical">수직 감도</label>
+      <input type="number" id="realVertical" placeholder="예: 0.90">
+
       <button onclick="calcReal()">계산</button>
       <div id="realResult"></div>
     </div>
+
+    <!-- 체감 보정 단일 변환 -->
     <div class="panel">
       <h2>🔄 체감 보정 단일 변환</h2>
-      <label>기준 DPI</label>
+      <label for="percBaseDPI">기준 DPI</label>
       <select id="percBaseDPI">
         <option value="400">400</option>
         <option value="800" selected>800</option>
@@ -51,7 +150,8 @@
         <option value="1600">1600</option>
         <option value="3200">3200</option>
       </select>
-      <label>변경 DPI</label>
+
+      <label for="percTargetDPI">변경 DPI</label>
       <select id="percTargetDPI">
         <option value="400">400</option>
         <option value="800">800</option>
@@ -59,46 +159,67 @@
         <option value="1600">1600</option>
         <option value="3200">3200</option>
       </select>
-      <label>기준 일반 감도</label><input type="number" id="percGeneral" placeholder="예: 46">
-      <label>옥타브당 감도 차이</label><input type="number" id="octaveDiff" placeholder="예: 15">
+
+      <label for="percGeneral">기준 일반 감도</label>
+      <input type="number" id="percGeneral" placeholder="예: 46">
+
+      <label for="octaveDiff">옥타브당 감도 차이</label>
+      <input type="number" id="octaveDiff" placeholder="예: 15">
+
       <button onclick="calcPerc()">계산</button>
       <div id="percResult"></div>
     </div>
-    <div class="panel explain">
+
+    <!-- 계산 원리 -->
+    <div class="panel full-width explain">
       <h2>📖 계산 원리</h2>
-      <p><strong>실감형 감도</strong>: <em>감도 = (기준 DPI × 감도) ÷ 대상 DPI</em></p>
-      <p><strong>체감 보정 변환</strong>: <em>새감도 = 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이]</em></p>
+      <p><strong>실감형 감도</strong><br>
+      감도 = (기준 DPI × 감도) ÷ 대상 DPI</p>
+      <p><strong>체감 보정 변환</strong><br>
+      새감도 = 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이]</p>
       <p>예시: 400→800, 기준감도 50, 차이 15 → <strong>50 – (1 × 15) = 35</strong></p>
+      <p>수직 보정 예시: 기준감도 40→35, 감도 비율 0.7937 → 수직 0.9÷0.7937 = 1.1339 (≈1.13)</p>
     </div>
-  </main>
+  </div>
+
   <script>
     const DPIs = [400,800,1200,1600,3200];
-    function calcReal(){
+
+    function calcReal() {
       const b = parseFloat(document.getElementById('realBaseDPI').value);
       const g = parseFloat(document.getElementById('realGeneral').value);
       const a = parseFloat(document.getElementById('realAim').value);
       const s = parseFloat(document.getElementById('realScope').value);
       const v = parseFloat(document.getElementById('realVertical').value);
-      if([b,g,a,s,v].some(isNaN)){ alert('모든 값을 입력해주세요'); return; }
-      let t = '<table><tr><th>DPI</th><th>일반</th><th>조준</th><th>스코프</th><th>수직</th></tr>';
-      DPIs.forEach(d=> {
-        t += `<tr><td>${d}</td>
+      if ([b,g,a,s,v].some(isNaN)) {
+        alert('모든 값을 입력해주세요');
+        return;
+      }
+      let html = '<table><tr><th>DPI</th><th>일반</th><th>조준</th><th>스코프</th><th>수직</th></tr>';
+      DPIs.forEach(d => {
+        html += `<tr>
+          <td>${d}</td>
           <td>${((b*g)/d).toFixed(2)}</td>
           <td>${((b*a)/d).toFixed(2)}</td>
           <td>${((b*s)/d).toFixed(2)}</td>
-          <td>${v.toFixed(2)}</td></tr>`;
+          <td>${v.toFixed(2)}</td>
+        </tr>`;
       });
-      t += '</table>';
-      document.getElementById('realResult').innerHTML = t;
+      html += '</table>';
+      document.getElementById('realResult').innerHTML = html;
     }
-    function calcPerc(){
+
+    function calcPerc() {
       const b = parseFloat(document.getElementById('percBaseDPI').value);
       const t = parseFloat(document.getElementById('percTargetDPI').value);
       const g = parseFloat(document.getElementById('percGeneral').value);
       const diff = parseFloat(document.getElementById('octaveDiff').value);
-      if([b,t,g,diff].some(isNaN)){ alert('모든 값을 입력해주세요'); return; }
+      if ([b,t,g,diff].some(isNaN)) {
+        alert('모든 값을 입력해주세요');
+        return;
+      }
       const oct = Math.log2(t/b);
-      const val = (g - oct*diff).toFixed(2);
+      const val = (g - oct * diff).toFixed(2);
       document.getElementById('percResult').innerHTML =
         `<p>옥타브 차이: ${oct.toFixed(2)}</p><p>체감 변환 감도: ${val}</p>`;
     }

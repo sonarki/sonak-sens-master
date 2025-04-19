@@ -193,10 +193,11 @@
     <div class="panel full-width explain">
       <h2>📖 계산 원리</h2>
       <p><strong>실감형 감도</strong><br>
-      새감도 = 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이]</p>
+      새감도 = max(1, 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이])</p>
       <p><strong>체감 보정 변환</strong><br>
       새감도 = 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이]</p>
-      <p>예시: 400→800, 기준감도 46, 차이 15 → <strong>46 – (1 × 15) = 31</strong></p>
+      <p>예시: 800→1600, 기준감도 23, 차이 15 → <strong>max(1, 23 – (1 × 15)) = 8</strong></p>
+      <p>예시: 800→3200, 기준감도 23, 차이 15 → <strong>max(1, 23 – (2 × 15)) = 1</strong></p>
       <p>수직 보정 예시: 기준감도 40→35, 감도 비율 0.7937 → 수직 0.9÷0.7937 = 1.1339 (≈1.13)</p>
     </div>
   </div>
@@ -218,9 +219,9 @@
       let html = '<table><tr><th>DPI</th><th>일반</th><th>조준</th><th>스코프</th><th>수직</th></tr>';
       DPIs.forEach(d => {
         const oct = Math.log2(d / b);
-        const newGeneral = (g - oct * OCTAVE_DIFF).toFixed(2);
-        const newAim = (a - oct * OCTAVE_DIFF).toFixed(2);
-        const newScope = (s - oct * OCTAVE_DIFF).toFixed(2);
+        const newGeneral = Math.max(1, (g - oct * OCTAVE_DIFF)).toFixed(2);
+        const newAim = Math.max(1, (a - oct * OCTAVE_DIFF)).toFixed(2);
+        const newScope = Math.max(1, (s - oct * OCTAVE_DIFF)).toFixed(2);
         html += `<tr>
           <td>${d}</td>
           <td>${newGeneral}</td>

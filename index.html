@@ -1,142 +1,163 @@
-# Create full index.html file with precise DPI-based sensitivity calculation and trust-building explanation
-html_v43 = """
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>소낙의 감도사 v4.3 - 정밀 감도 계산 + 설명 포함</title>
+  <meta charset="UTF-8" />
+  <title>소낙의 감도사 v5.0</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
-      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
+      background-color: #f4f4f4;
     }
     header {
-      background-color: #333;
-      color: white;
+      background-color: #222;
+      color: #fff;
       padding: 20px;
       text-align: center;
     }
-    main {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 20px;
-    }
-    .calculator, .info {
-      flex: 1 1 450px;
-      background: white;
-      margin: 10px;
+    section {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: #fff;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #333;
+      margin-top: 0;
     }
     label {
+      font-weight: bold;
       display: block;
       margin-top: 10px;
-      font-weight: bold;
     }
-    input, button {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
+      margin-bottom: 15px;
       border-radius: 6px;
       border: 1px solid #ccc;
       box-sizing: border-box;
     }
     button {
       background-color: #333;
-      color: white;
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 20px;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 15px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 8px;
       text-align: center;
     }
     th {
       background-color: #f0f0f0;
     }
-    h3 {
-      margin-top: 0;
+    .description {
+      background: #f9f9f9;
+      border-left: 4px solid #333;
+      padding: 10px;
+      margin-top: 15px;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>v4.3 | 정확한 감도 계산 + 신뢰성 있는 설명 포함</p>
+    <p>v5.0 | 실감형 감도 + eDPI 보정 감도 + 역사까지</p>
   </header>
-  <main>
-    <div class="calculator">
-      <label for="baseDPI">기준 DPI</label>
-      <input type="number" id="baseDPI" placeholder="예: 400">
 
-      <label for="baseSens">기준 감도</label>
-      <input type="number" id="baseSens" placeholder="예: 50">
+  <section>
+    <h2>1️⃣ 실감형 감도 계산기</h2>
+    <label>기준 DPI</label>
+    <input type="number" id="baseDPI" placeholder="예: 400">
 
-      <button onclick="calculate()">계산하기</button>
+    <label>기준 감도</label>
+    <input type="number" id="baseSens" placeholder="예: 50">
 
-      <div id="result"></div>
+    <button onclick="calcReal()">계산하기</button>
+    <div id="realResult"></div>
+
+    <div class="description">
+      🎯 이 계산기는 FPS 프로게이머들이 오랫동안 사용해온 방식으로,<br>
+      <strong>기준 DPI × 기준 감도 ÷ 새로운 DPI</strong> 공식으로 작동합니다.<br>
+      동일한 손 움직임에 대해 DPI가 바뀌었을 때 체감 감도를 유지하기 위한 계산입니다.
     </div>
-    <div class="info">
-      <h3>📘 계산 원리 및 유래</h3>
-      <p><strong>DPI (Dots Per Inch)</strong>는 마우스가 1인치 이동했을 때 커서가 몇 픽셀 움직이는지를 뜻합니다.</p>
-      <p><strong>감도(Sensitivity)</strong>는 게임 내에서의 마우스 이동량을 조절하는 설정입니다. 이 둘의 곱 = <strong>eDPI</strong>(체감 감도)를 결정합니다.</p>
+  </section>
 
-      <h4>📌 현재 방식 (비례 감도 계산법)</h4>
-      <p>이 계산법은 <strong>FPS 프로게이머들 사이에서 2000년대 초부터 사용된 방식</strong>으로, 초기에는 Counter-Strike, Quake 등에서 널리 쓰였습니다.</p>
-      <p>이 방식은 <strong>"동일한 마우스 패드 위에서 동일한 손의 움직임"</strong>을 기준으로, DPI가 변할 때 감도를 반비례 조정해 동일한 조작감을 유지하도록 설계되었습니다.</p>
+  <section>
+    <h2>2️⃣ eDPI 기반 체감 보정 감도</h2>
+    <label>일반 감도</label>
+    <input type="number" id="general">
 
-      <h4>🎯 계산 공식</h4>
-      <ul>
-        <li><strong>새로운 감도 = (기준 DPI × 기준 감도) ÷ 새로운 DPI</strong></li>
-        <li>예: 기준 DPI = 400, 기준 감도 = 50 → 800 DPI에서는 25</li>
-        <li>이로써 모든 DPI에서도 동일한 조작감이 유지됩니다.</li>
-      </ul>
+    <label>수직 감도</label>
+    <input type="number" id="vertical">
 
-      <h4>✔️ 왜 이 방식이 정확한가?</h4>
-      <p>이 계산법은 실제 프로 선수들의 감도 설정 방식이며, PUBG, Valorant, CS:GO 등 거의 모든 FPS 게임에서 동일하게 적용됩니다. "DPI 변화는 감도로 보정한다"는 원칙이 전 세계적으로 통용되고 있습니다.</p>
+    <button onclick="calcEDPI()">계산하기</button>
+    <div id="edpiResult"></div>
 
-      <p><strong>소낙의 감도사</strong>는 이러한 원리를 기반으로 하여, 수치적으로도, 체감상으로도 정확한 결과를 제공합니다.</p>
+    <div class="description">
+      📐 이 계산은 연사 반동을 줄이기 위해 수직 감도를 낮췄을 경우,<br>
+      스코프 감도를 자동 보정해 체감 밸런스를 유지합니다.<br>
+      공식: <strong>스코프 감도 × (1 ÷ 수직감도) × 보정계수(1.2)</strong><br>
+      조준 = 일반 × 0.7 / 스코프 = 일반 × 0.6 기준입니다.
     </div>
-  </main>
+  </section>
+
+  <section>
+    <h2>📘 감도 계산의 역사와 출처</h2>
+    <div class="description">
+      🎮 FPS 게임에서 감도 계산은 <strong>2000년대 초 Counter-Strike, Quake</strong> 등의 프로씬에서 확립되었습니다.<br>
+      이후 Valorant, CS:GO, PUBG 등으로 확대되며, DPI에 따라 감도를 보정하는 것이 업계 표준이 되었습니다.<br><br>
+      이 방식은 <strong>eDPI = DPI × 감도</strong>라는 개념으로 정착되었고, 전 세계 프로게이머와 트레이너들이 사용 중입니다.<br>
+      신뢰 가능한 출처:<br>
+      - prosettings.net<br>
+      - liquipedia.net<br>
+      - reddit.com/r/MouseReview<br><br>
+      소낙의 감도사는 이 정통 계산 원리를 바탕으로, 정확하고 체감까지 고려한 보정을 제공합니다.
+    </div>
+  </section>
 
   <script>
     const dpis = [400, 800, 1200, 1600, 3200];
 
-    function calculate() {
-      const baseDPI = parseFloat(document.getElementById("baseDPI").value);
-      const baseSens = parseFloat(document.getElementById("baseSens").value);
-
-      if (isNaN(baseDPI) || isNaN(baseSens) || baseDPI <= 0 || baseSens <= 0) {
-        alert("기준 DPI와 감도를 올바르게 입력해주세요.");
-        return;
-      }
-
-      let html = '<table><tr><th>DPI</th><th>계산된 감도</th></tr>';
-
-      dpis.forEach(dpi => {
-        const sens = ((baseDPI * baseSens) / dpi).toFixed(2);
-        html += `<tr><td>${dpi}</td><td>${sens}</td></tr>`;
+    function calcReal() {
+      const dpi = parseFloat(document.getElementById("baseDPI").value);
+      const sens = parseFloat(document.getElementById("baseSens").value);
+      let html = "<table><tr><th>DPI</th><th>감도</th></tr>";
+      dpis.forEach(d => {
+        html += `<tr><td>${d}</td><td>${((dpi * sens) / d).toFixed(2)}</td></tr>`;
       });
+      html += "</table>";
+      document.getElementById("realResult").innerHTML = html;
+    }
 
-      html += '</table>';
-      document.getElementById("result").innerHTML = html;
+    function calcEDPI() {
+      const general = parseFloat(document.getElementById("general").value);
+      const vertical = parseFloat(document.getElementById("vertical").value);
+      const aim = general * 0.7;
+      const scope = general * 0.6;
+      const compensation = scope * (1 / vertical) * 1.2;
+
+      let html = `<table>
+        <tr><th>구분</th><th>감도</th></tr>
+        <tr><td>일반 감도</td><td>${general.toFixed(2)}</td></tr>
+        <tr><td>수직 감도</td><td>${vertical.toFixed(2)}</td></tr>
+        <tr><td>조준 감도</td><td>${aim.toFixed(2)}</td></tr>
+        <tr><td>스코프 감도</td><td>${scope.toFixed(2)}</td></tr>
+        <tr><td>보정 스코프 감도</td><td>${compensation.toFixed(2)}</td></tr>
+      </table>`;
+      document.getElementById("edpiResult").innerHTML = html;
     }
   </script>
 </body>
 </html>
-"""
-
-with open("/mnt/data/index.html", "w", encoding="utf-8") as f:
-    f.write(html_v43)
-
-"/mnt/data/index.html"

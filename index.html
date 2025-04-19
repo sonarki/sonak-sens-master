@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v5.2.1</title>
+  <title>소낙의 감도사 v5.2.3</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
@@ -85,7 +85,7 @@
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>v5.2.1 | 기준 DPI 선택 팝업 + 결과 출력 보완</p>
+    <p>v5.2.3 | 캡틴을 위한 실전 감도 계산기</p>
   </header>
   <main>
     <div class="sidebar">
@@ -144,6 +144,11 @@
       const a = parseFloat(document.getElementById("baseAim").value);
       const s = parseFloat(document.getElementById("baseScope").value);
       const v = parseFloat(document.getElementById("baseVertical").value);
+
+      if (isNaN(baseDPI) || isNaN(g) || isNaN(a) || isNaN(s) || isNaN(v)) {
+        alert("모든 값을 올바르게 입력해주세요.");
+        return;
+      }
 
       let html = "<table><tr><th>DPI</th><th>일반 감도</th><th>조준 감도</th><th>스코프 감도</th><th>수직 감도</th></tr>";
       dpis.forEach(d => {

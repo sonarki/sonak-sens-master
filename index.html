@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v5.0</title>
+  <title>소낙의 감도사 v5.1</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
+      background-color: #f4f4f4;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
     }
     header {
       background-color: #222;
@@ -73,7 +73,7 @@
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>v5.0 | 실감형 감도 + eDPI 보정 감도 + 역사까지</p>
+    <p>v5.1 | 조준, 스코프, 수직 포함 완전판</p>
   </header>
 
   <section>
@@ -81,49 +81,34 @@
     <label>기준 DPI</label>
     <input type="number" id="baseDPI" placeholder="예: 400">
 
-    <label>기준 감도</label>
-    <input type="number" id="baseSens" placeholder="예: 50">
+    <label>일반 감도</label>
+    <input type="number" id="baseGeneral" placeholder="예: 43">
+
+    <label>조준 감도</label>
+    <input type="number" id="baseAim" placeholder="예: 30">
+
+    <label>스코프 감도</label>
+    <input type="number" id="baseScope" placeholder="예: 30">
+
+    <label>수직 감도</label>
+    <input type="number" id="baseVertical" placeholder="예: 1.0">
 
     <button onclick="calcReal()">계산하기</button>
     <div id="realResult"></div>
 
     <div class="description">
-      🎯 이 계산기는 FPS 프로게이머들이 오랫동안 사용해온 방식으로,<br>
-      <strong>기준 DPI × 기준 감도 ÷ 새로운 DPI</strong> 공식으로 작동합니다.<br>
-      동일한 손 움직임에 대해 DPI가 바뀌었을 때 체감 감도를 유지하기 위한 계산입니다.
-    </div>
-  </section>
-
-  <section>
-    <h2>2️⃣ eDPI 기반 체감 보정 감도</h2>
-    <label>일반 감도</label>
-    <input type="number" id="general">
-
-    <label>수직 감도</label>
-    <input type="number" id="vertical">
-
-    <button onclick="calcEDPI()">계산하기</button>
-    <div id="edpiResult"></div>
-
-    <div class="description">
-      📐 이 계산은 연사 반동을 줄이기 위해 수직 감도를 낮췄을 경우,<br>
-      스코프 감도를 자동 보정해 체감 밸런스를 유지합니다.<br>
-      공식: <strong>스코프 감도 × (1 ÷ 수직감도) × 보정계수(1.2)</strong><br>
-      조준 = 일반 × 0.7 / 스코프 = 일반 × 0.6 기준입니다.
+      🎯 기준 DPI와 감도를 기준으로 다른 DPI에서 동일한 체감을 유지하도록 감도를 계산합니다.<br>
+      공식: <strong>(기준 DPI × 감도) ÷ 대상 DPI</strong>
     </div>
   </section>
 
   <section>
     <h2>📘 감도 계산의 역사와 출처</h2>
     <div class="description">
-      🎮 FPS 게임에서 감도 계산은 <strong>2000년대 초 Counter-Strike, Quake</strong> 등의 프로씬에서 확립되었습니다.<br>
-      이후 Valorant, CS:GO, PUBG 등으로 확대되며, DPI에 따라 감도를 보정하는 것이 업계 표준이 되었습니다.<br><br>
-      이 방식은 <strong>eDPI = DPI × 감도</strong>라는 개념으로 정착되었고, 전 세계 프로게이머와 트레이너들이 사용 중입니다.<br>
-      신뢰 가능한 출처:<br>
-      - prosettings.net<br>
-      - liquipedia.net<br>
-      - reddit.com/r/MouseReview<br><br>
-      소낙의 감도사는 이 정통 계산 원리를 바탕으로, 정확하고 체감까지 고려한 보정을 제공합니다.
+      FPS 감도 계산은 <strong>2000년대 초 Counter-Strike, Quake</strong> 등에서 프로게이머들에 의해 정립되었습니다.<br>
+      이론: <strong>eDPI = DPI × 감도</strong><br>
+      출처: prosettings.net, liquipedia.net, reddit.com/r/MouseReview 등<br>
+      PUBG, Valorant, Apex 등에서도 동일한 방식이 쓰이며, 소낙의 감도사는 이를 바탕으로 구성됩니다.
     </div>
   </section>
 
@@ -131,32 +116,24 @@
     const dpis = [400, 800, 1200, 1600, 3200];
 
     function calcReal() {
-      const dpi = parseFloat(document.getElementById("baseDPI").value);
-      const sens = parseFloat(document.getElementById("baseSens").value);
-      let html = "<table><tr><th>DPI</th><th>감도</th></tr>";
+      const baseDPI = parseFloat(document.getElementById("baseDPI").value);
+      const g = parseFloat(document.getElementById("baseGeneral").value);
+      const a = parseFloat(document.getElementById("baseAim").value);
+      const s = parseFloat(document.getElementById("baseScope").value);
+      const v = parseFloat(document.getElementById("baseVertical").value);
+
+      let html = "<table><tr><th>DPI</th><th>일반 감도</th><th>조준 감도</th><th>스코프 감도</th><th>수직 감도</th></tr>";
       dpis.forEach(d => {
-        html += `<tr><td>${d}</td><td>${((dpi * sens) / d).toFixed(2)}</td></tr>`;
+        html += `<tr>
+          <td>${d}</td>
+          <td>${((baseDPI * g) / d).toFixed(2)}</td>
+          <td>${((baseDPI * a) / d).toFixed(2)}</td>
+          <td>${((baseDPI * s) / d).toFixed(2)}</td>
+          <td>${v.toFixed(2)}</td>
+        </tr>`;
       });
       html += "</table>";
       document.getElementById("realResult").innerHTML = html;
-    }
-
-    function calcEDPI() {
-      const general = parseFloat(document.getElementById("general").value);
-      const vertical = parseFloat(document.getElementById("vertical").value);
-      const aim = general * 0.7;
-      const scope = general * 0.6;
-      const compensation = scope * (1 / vertical) * 1.2;
-
-      let html = `<table>
-        <tr><th>구분</th><th>감도</th></tr>
-        <tr><td>일반 감도</td><td>${general.toFixed(2)}</td></tr>
-        <tr><td>수직 감도</td><td>${vertical.toFixed(2)}</td></tr>
-        <tr><td>조준 감도</td><td>${aim.toFixed(2)}</td></tr>
-        <tr><td>스코프 감도</td><td>${scope.toFixed(2)}</td></tr>
-        <tr><td>보정 스코프 감도</td><td>${compensation.toFixed(2)}</td></tr>
-      </table>`;
-      document.getElementById("edpiResult").innerHTML = html;
     }
   </script>
 </body>

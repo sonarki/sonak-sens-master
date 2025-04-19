@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v4 - 수직보정 포함</title>
+  <title>소낙의 감도사 v4.1 - 체감 최적화 보정</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
@@ -67,7 +67,7 @@
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>eDPI + 수직감도 보정 기반 체감 최적화 계산기</p>
+    <p>v4.1 | eDPI + 실감형 스코프 보정 (수직 감도 연동)</p>
   </header>
   <main>
     <div class="calculator">
@@ -81,16 +81,16 @@
       </select>
 
       <label for="general">일반 감도</label>
-      <input type="number" id="general" placeholder="예: 30">
+      <input type="number" id="general" placeholder="예: 28">
 
       <label for="vertical">수직 감도</label>
-      <input type="number" id="vertical" placeholder="예: 1.0">
+      <input type="number" id="vertical" placeholder="예: 0.9">
 
       <label for="aim">조준 감도</label>
-      <input type="number" id="aim" placeholder="예: 22">
+      <input type="number" id="aim" placeholder="예: 23">
 
       <label for="scope">스코프 감도</label>
-      <input type="number" id="scope" placeholder="예: 19">
+      <input type="number" id="scope" placeholder="예: 18">
 
       <button onclick="calculate()">감도 계산하기</button>
 
@@ -102,15 +102,15 @@
         <li><strong>eDPI = DPI × 감도</strong></li>
         <li>모든 감도는 eDPI 기준으로 환산</li>
         <li>수직 감도는 고정</li>
-        <li><strong>수직 감도 ↓ 시, 스코프 감도 ↑ 보정</strong> (체감 평형 유지)</li>
-        <li>보정계수 = 1 ÷ (수직감도 ÷ 기준값)</li>
-        <li>보정 스코프 감도 = 스코프 감도 × 보정계수</li>
+        <li><strong>수직 감도 ↓ 시, 스코프 감도 ↑ 보정</strong></li>
+        <li>보정 스코프 = 스코프 감도 × (1 ÷ 수직감도) × <strong>1.2 (보정계수)</strong></li>
       </ul>
     </div>
   </main>
   <script>
     const dpis = [400, 800, 1200, 1600, 3200];
     const baseVertical = 1.0;
+    const multiplier = 1.2; // 체감 보정 상수
 
     function calculate() {
       const dpi = parseInt(document.getElementById("dpi").value);
@@ -123,8 +123,7 @@
       const eDPI_aim = dpi * aim;
       const eDPI_scope = dpi * scope;
 
-      const verticalFactor = vertical / baseVertical;
-      const scopeCompensation = 1 / verticalFactor;
+      const scopeCompFactor = (1 / vertical) * multiplier;
 
       let html = '<table><tr><th>DPI</th><th>일반</th><th>수직</th><th>조준</th><th>스코프</th><th>보정 스코프</th></tr>';
 
@@ -132,7 +131,7 @@
         const g = (eDPI_general / d).toFixed(2);
         const a = (eDPI_aim / d).toFixed(2);
         const s = (eDPI_scope / d).toFixed(2);
-        const sc = (s * scopeCompensation).toFixed(2);
+        const sc = (s * scopeCompFactor).toFixed(2);
         html += `<tr><td>${d}</td><td>${g}</td><td>${vertical.toFixed(2)}</td><td>${a}</td><td>${s}</td><td>${sc}</td></tr>`;
       });
 

@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v5.2</title>
+  <title>소낙의 감도사 v5.2.1</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
@@ -47,7 +47,7 @@
       display: block;
       margin-top: 10px;
     }
-    input, button {
+    input, select, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -85,7 +85,7 @@
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>v5.2 | 실전 전문가용 감도 계산기</p>
+    <p>v5.2.1 | 기준 DPI 선택 팝업 + 결과 출력 보완</p>
   </header>
   <main>
     <div class="sidebar">
@@ -99,7 +99,13 @@
     <div class="calculator">
       <h2>🎯 감도 계산기</h2>
       <label>기준 DPI</label>
-      <input type="number" id="baseDPI" placeholder="예: 400">
+      <select id="baseDPI">
+        <option value="400">400</option>
+        <option value="800" selected>800</option>
+        <option value="1200">1200</option>
+        <option value="1600">1600</option>
+        <option value="3200">3200</option>
+      </select>
 
       <label>일반 감도</label>
       <input type="number" id="baseGeneral" placeholder="예: 43">
@@ -121,11 +127,11 @@
       <h2>📐 계산 방식 설명</h2>
       <p>이 계산기는 다음 공식을 기반으로 합니다:</p>
       <ul>
-        <li><strong>일반 계산: (기준 DPI × 감도) ÷ 대상 DPI</strong></li>
-        <li>조준 / 스코프 감도도 동일한 방식으로 계산됩니다.</li>
-        <li>수직 감도는 고정값으로 유지됩니다.</li>
+        <li><strong>감도 = (기준 DPI × 감도) ÷ 대상 DPI</strong></li>
+        <li>모든 감도(일반, 조준, 스코프)는 동일한 방식으로 계산됩니다.</li>
+        <li>수직 감도는 입력값 그대로 유지됩니다.</li>
       </ul>
-      <p>이 방식은 eDPI 기반보다 현실적인 체감 기반 감도 비교를 제공합니다.</p>
+      <p>현실적인 체감에 기반한 고정 비율 계산입니다.</p>
     </div>
   </main>
 
@@ -143,6 +149,15 @@
       dpis.forEach(d => {
         html += `<tr>
           <td>${d}</td>
-          <td>${
-::contentReference[oaicite:0]{index=0}
- 
+          <td>${((baseDPI * g) / d).toFixed(2)}</td>
+          <td>${((baseDPI * a) / d).toFixed(2)}</td>
+          <td>${((baseDPI * s) / d).toFixed(2)}</td>
+          <td>${v.toFixed(2)}</td>
+        </tr>`;
+      });
+      html += "</table>";
+      document.getElementById("realResult").innerHTML = html;
+    }
+  </script>
+</body>
+</html>

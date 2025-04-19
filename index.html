@@ -161,29 +161,14 @@
     <!-- 체감 보정 단일 변환 -->
     <div class="panel">
       <h2>🔄 체감 보정 단일 변환</h2>
-      <label for="percBaseDPI">기준 DPI</label>
-      <select id="percBaseDPI">
-        <option value="400">400</option>
-        <option value="800" selected>800</option>
-        <option value="1200">1200</option>
-        <option value="1600">1600</option>
-        <option value="3200">3200</option>
-      </select>
+      <label for="baseVertical">기존 수직 감도</label>
+      <input type="number" id="baseVertical" value="1.0" step="0.01">
 
-      <label for="percTargetDPI">변경 DPI</label>
-      <select id="percTargetDPI">
-        <option value="400">400</option>
-        <option value="800">800</option>
-        <option value="1200" selected>1200</option>
-        <option value="1600">1600</option>
-        <option value="3200">3200</option>
-      </select>
+      <label for="newVertical">새로운 수직 감도</label>
+      <input type="number" id="newVertical" value="1.2" step="0.01">
 
-      <label for="percGeneral">기준 일반 감도</label>
-      <input type="number" id="percGeneral" placeholder="예: 46">
-
-      <label for="octaveDiff">옥타브당 감도 차이</label>
-      <input type="number" id="octaveDiff" placeholder="예: 15">
+      <label for="baseScope">기존 스코프 감도</label>
+      <input type="number" id="baseScope" value="18">
 
       <button onclick="calcPerc()" aria-label="체감 보정 변환 계산">계산</button>
       <div id="percResult"></div>
@@ -195,10 +180,8 @@
       <p><strong>실감형 감도</strong><br>
       새감도 = max(1, 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이])</p>
       <p><strong>체감 보정 변환</strong><br>
-      새감도 = 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이]</p>
-      <p>예시: 800→1600, 기준감도 23, 차이 15 → <strong>max(1, 23 – (1 × 15)) = 8</strong></p>
-      <p>예시: 800→3200, 기준감도 23, 차이 15 → <strong>max(1, 23 – (2 × 15)) = 1</strong></p>
-      <p>수직 보정 예시: 기준감도 40→35, 감도 비율 0.7937 → 수직 0.9÷0.7937 = 1.1339 (≈1.13)</p>
+      새로운 스코프 감도 = 기존 스코프 감도 × (기존 수직 감도 ÷ 새로운 수직 감도)<br>
+      예시: 기존 수직 1.0 → 새로운 수직 1.2, 기존 스코프 18 → <strong>18 × (1.0 ÷ 1.2) = 15.00</strong></p>
     </div>
   </div>
 
@@ -236,17 +219,16 @@
     }
 
     function calcPerc() {
-      const b = parseFloat(document.getElementById('percBaseDPI').value);
-      const t = parseFloat(document.getElementById('percTargetDPI').value);
-      const g = parseFloat(document.getElementById('percGeneral').value);
-      const diff = parseFloat(document.getElementById('octaveDiff').value);
-      if ([b, t, g, diff].some(val => isNaN(val) || val <= 0)) {
+      const baseVertical = parseFloat(document.getElementById('baseVertical').value);
+      const newVertical = parseFloat(document.getElementById('newVertical').value);
+      const baseScope = parseFloat(document.getElementById('baseScope').value);
+      if ([baseVertical, newVertical, baseScope].some(val => isNaN(val) || val <= 0)) {
         alert('모든 값은 0보다 큰 숫자여야 합니다.');
         return;
       }
-      const oct = Math.log2(t / b);
-      const val = Math.max(1, (g - oct * diff)).toFixed(2);
-      const resultHtml = `<p>옥타브 차이: ${oct.toFixed(2)}</p><p>체감 변환 감도: ${val}</p>`;
+      const ratio = baseVertical / newVertical;
+      const newScope = Math.max(1, (baseScope * ratio)).toFixed(2);
+      const resultHtml = `<p>수직 감도 비율: ${(ratio).toFixed(4)}</p><p>새로운 스코프 감도: ${newScope}</p>`;
       document.getElementById('percResult').innerHTML = resultHtml + '<button class="copy-btn" onclick="copyPercResult()">결과 복사</button>';
     }
 

@@ -5,10 +5,12 @@
   <title>소낙의 감도사 🎯 v6.3</title>
   <style>
     body {
-      font-family: 'Pretendard', sans-serif;
+      font-family: Arial, sans-serif;
       background-color: #f0f2f5;
       margin: 0;
       padding: 0;
+      height: 100vh;
+      overflow: auto;
     }
     header {
       background-color: #334155;
@@ -135,24 +137,24 @@
       <h2>📊 실감형 감도 테이블</h2>
       <label for="realBaseDPI">기준 DPI</label>
       <select id="realBaseDPI">
-        <option value="400">400</option>
-        <option value="800" selected>800</option>
+        <option value="400" selected>400</option>
+        <option value="800">800</option>
         <option value="1200">1200</option>
         <option value="1600">1600</option>
         <option value="3200">3200</option>
       </select>
 
       <label for="realGeneral">일반 감도</label>
-      <input type="number" id="realGeneral" placeholder="예: 46">
+      <input type="number" id="realGeneral" placeholder="예: 50">
 
       <label for="realAim">조준 감도</label>
-      <input type="number" id="realAim" placeholder="예: 44">
+      <input type="number" id="realAim" placeholder="예: 50">
 
       <label for="realScope">스코프 감도</label>
-      <input type="number" id="realScope" placeholder="예: 36">
+      <input type="number" id="realScope" placeholder="예: 50">
 
       <label for="realVertical">수직 감도</label>
-      <input type="number" id="realVertical" placeholder="예: 0.90">
+      <input type="number" id="realVertical" placeholder="예: 1.0">
 
       <button onclick="calcReal()" aria-label="실감형 감도 계산">계산</button>
       <div id="realResult"></div>
@@ -168,7 +170,7 @@
       <input type="number" id="newVertical" value="1.2" step="0.01">
 
       <label for="baseScope">기존 스코프 감도</label>
-      <input type="number" id="baseScope" value="18">
+      <input type="number" id="baseScope" value="50">
 
       <button onclick="calcPerc()" aria-label="체감 보정 변환 계산">계산</button>
       <div id="percResult"></div>
@@ -178,10 +180,21 @@
     <div class="panel full-width explain">
       <h2>📖 계산 원리</h2>
       <p><strong>실감형 감도</strong><br>
-      새감도 = max(1, 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이])</p>
+      새감도 = max(1, 기준감도 – [log₂(변경DPI ÷ 기준DPI) × 옥타브당 감도 차이])<br>
+      예시: 기준 DPI 400 → 변경 DPI 800, 기준감도 50, 차이 15 → <strong>max(1, 50 – (1 × 15)) = 35</strong></p>
       <p><strong>체감 보정 변환</strong><br>
       새로운 스코프 감도 = 기존 스코프 감도 × (기존 수직 감도 ÷ 새로운 수직 감도)<br>
-      예시: 기존 수직 1.0 → 새로운 수직 1.2, 기존 스코프 18 → <strong>18 × (1.0 ÷ 1.2) = 15.00</strong></p>
+      예시: 기존 수직 1.0 → 새로운 수직 1.2, 기존 스코프 50 → <strong>50 × (1.0 ÷ 1.2) = 41.67</strong></p>
+      <h2>📜 계산 원리 근거</h2>
+      <p><strong>실감형 감도:</strong> FPS 게임에서 DPI 변경 시 체감 감도를 일정하게 유지하기 위해 사용됩니다. PUBG 커뮤니티에서 DPI가 2배 증가할 때 감도가 약 15 감소해야 체감이 유지된다는 경험적 데이터에 기반합니다 (참고: Reddit r/PUBATTLEGROUNDS).</p>
+      <p><strong>체감 보정 변환:</strong> 수직 감도 변경 시 조준 느낌을 일정하게 유지하기 위해 스코프 감도를 비례적으로 조정합니다. 이는 Aim Lab과 같은 감도 변환 도구에서 유사하게 사용되는 방식입니다.</p>
+      <h2>🕰️ 감도 설정의 역사</h2>
+      <p>- 1990년대 후반: Quake와 같은 초기 FPS 게임에서 마우스 감도 설정이 중요해짐.<br>
+      - 2000년대: Counter-Strike에서 감도 조정이 체계화.<br>
+      - 2010년대: PUBG(2017) 출시 후 DPI 변화에 따른 체감 보정 공식이 커뮤니티에서 발전.<br>
+      - 현재: Aim Lab, KovaaK’s와 같은 도구로 감도 변환 표준화.</p>
+      <h2>📝 감도 개념 요약</h2>
+      <p>마우스 감도는 마우스 움직임과 게임 내 시점 이동의 비율을 의미합니다. DPI는 마우스 해상도를 나타내며, FPS 게임에서는 일반, 조준, 스코프, 수직 감도를 별도로 설정합니다. 체감 보정은 DPI나 수직 감도 변경 시 조준 느낌을 일정하게 유지하기 위해 필요합니다.</p>
     </div>
   </div>
 

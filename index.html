@@ -212,8 +212,8 @@
       const a = parseFloat(document.getElementById('realAim').value);
       const s = parseFloat(document.getElementById('realScope').value);
       const v = parseFloat(document.getElementById('realVertical').value);
-      if ([b, g, a, s, v].some(isNaN)) {
-        alert('모든 값을 입력해주세요');
+      if ([b, g, a, s, v].some(val => isNaN(val) || val <= 0)) {
+        alert('모든 값은 0보다 큰 숫자여야 합니다.');
         return;
       }
       let html = '<table><tr><th>DPI</th><th>일반</th><th>조준</th><th>스코프</th><th>수직</th></tr>';
@@ -240,12 +240,12 @@
       const t = parseFloat(document.getElementById('percTargetDPI').value);
       const g = parseFloat(document.getElementById('percGeneral').value);
       const diff = parseFloat(document.getElementById('octaveDiff').value);
-      if ([b, t, g, diff].some(isNaN)) {
-        alert('모든 값을 입력해주세요');
+      if ([b, t, g, diff].some(val => isNaN(val) || val <= 0)) {
+        alert('모든 값은 0보다 큰 숫자여야 합니다.');
         return;
       }
       const oct = Math.log2(t / b);
-      const val = (g - oct * diff).toFixed(2);
+      const val = Math.max(1, (g - oct * diff)).toFixed(2);
       const resultHtml = `<p>옥타브 차이: ${oct.toFixed(2)}</p><p>체감 변환 감도: ${val}</p>`;
       document.getElementById('percResult').innerHTML = resultHtml + '<button class="copy-btn" onclick="copyPercResult()">결과 복사</button>';
     }

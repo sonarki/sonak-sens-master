@@ -75,6 +75,25 @@
       font-weight: 600;
       cursor: pointer;
     }
+    .panel button:hover {
+      background-color: #475569;
+      transition: background-color 0.2s;
+    }
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #64748b;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background-color: #94a3b8;
+      transition: background-color 0.2s;
+    }
     table {
       width: 100%;
       border-collapse: collapse;
@@ -135,7 +154,7 @@
       <label for="realVertical">수직 감도</label>
       <input type="number" id="realVertical" placeholder="예: 0.90">
 
-      <button onclick="calcReal()">계산</button>
+      <button onclick="calcReal()" aria-label="실감형 감도 계산">계산</button>
       <div id="realResult"></div>
     </div>
 
@@ -166,7 +185,7 @@
       <label for="octaveDiff">옥타브당 감도 차이</label>
       <input type="number" id="octaveDiff" placeholder="예: 15">
 
-      <button onclick="calcPerc()">계산</button>
+      <button onclick="calcPerc()" aria-label="체감 보정 변환 계산">계산</button>
       <div id="percResult"></div>
     </div>
 
@@ -183,7 +202,7 @@
   </div>
 
   <script>
-    const DPIs = [400,800,1200,1600,3200];
+    const DPIs = [400, 800, 1200, 1600, 3200];
 
     function calcReal() {
       const b = parseFloat(document.getElementById('realBaseDPI').value);
@@ -191,7 +210,7 @@
       const a = parseFloat(document.getElementById('realAim').value);
       const s = parseFloat(document.getElementById('realScope').value);
       const v = parseFloat(document.getElementById('realVertical').value);
-      if ([b,g,a,s,v].some(isNaN)) {
+      if ([b, g, a, s, v].some(isNaN)) {
         alert('모든 값을 입력해주세요');
         return;
       }
@@ -199,13 +218,14 @@
       DPIs.forEach(d => {
         html += `<tr>
           <td>${d}</td>
-          <td>${((b*g)/d).toFixed(2)}</td>
-          <td>${((b*a)/d).toFixed(2)}</td>
-          <td>${((b*s)/d).toFixed(2)}</td>
+          <td>${((b * g) / d).toFixed(2)}</td>
+          <td>${((b * a) / d).toFixed(2)}</td>
+          <td>${((b * s) / d).toFixed(2)}</td>
           <td>${v.toFixed(2)}</td>
         </tr>`;
       });
       html += '</table>';
+      html += '<button class="copy-btn" onclick="copyRealResult()">결과 복사</button>';
       document.getElementById('realResult').innerHTML = html;
     }
 
@@ -214,14 +234,38 @@
       const t = parseFloat(document.getElementById('percTargetDPI').value);
       const g = parseFloat(document.getElementById('percGeneral').value);
       const diff = parseFloat(document.getElementById('octaveDiff').value);
-      if ([b,t,g,diff].some(isNaN)) {
+      if ([b, t, g, diff].some(isNaN)) {
         alert('모든 값을 입력해주세요');
         return;
       }
-      const oct = Math.log2(t/b);
+      const oct = Math.log2(t / b);
       const val = (g - oct * diff).toFixed(2);
-      document.getElementById('percResult').innerHTML =
-        `<p>옥타브 차이: ${oct.toFixed(2)}</p><p>체감 변환 감도: ${val}</p>`;
+      const resultHtml = `<p>옥타브 차이: ${oct.toFixed(2)}</p><p>체감 변환 감도: ${val}</p>`;
+      document.getElementById('percResult').innerHTML = resultHtml + '<button class="copy-btn" onclick="copyPercResult()">결과 복사</button>';
+    }
+
+    function copyRealResult() {
+      const table = document.querySelector('#realResult table');
+      let text = 'DPI\t일반\t조준\t스코프\t수직\n';
+      const rows = table.querySelectorAll('tr');
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td, th');
+        text += Array.from(cells).map(cell => cell.textContent).join('\t') + '\n';
+      });
+      navigator.clipboard.writeText(text).then(() => {
+        alert('결과가 클립보드에 복사되었습니다!');
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해주세요.');
+      });
+    }
+
+    function copyPercResult() {
+      const result = document.querySelector('#percResult').textContent.replace('결과 복사', '').trim();
+      navigator.clipboard.writeText(result).then(() => {
+        alert('결과가 클립보드에 복사되었습니다!');
+      }).catch(() => {
+        alert('복사에 실패했습니다. 수동으로 복사해주세요.');
+      });
     }
   </script>
 </body>

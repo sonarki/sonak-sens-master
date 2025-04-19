@@ -92,4 +92,57 @@
       <h2>📘 감도 계산의 역사</h2>
       <p>FPS 감도 계산법은 2000년대 초 <strong>Quake</strong>, <strong>Counter-Strike</strong> 등에서 시작되었습니다.<br><br>
       <strong>eDPI = DPI × 감도</strong> 라는 개념은 프로게이머들이 일관된 마우스 이동 체감을 위해 만든 계산법입니다.<br><br>
-      PUBG, Valorant, Apex 등 주요 FPS 게임
+      PUBG, Valorant, Apex 등 주요 FPS 게임에서 동일하게 사용됩니다.</p>
+      <p class="note">출처: prosettings.net, liquipedia, Reddit r/MouseReview</p>
+    </div>
+
+    <div class="calculator">
+      <h2>🎯 감도 계산기</h2>
+      <label>기준 DPI</label>
+      <input type="number" id="baseDPI" placeholder="예: 400">
+
+      <label>일반 감도</label>
+      <input type="number" id="baseGeneral" placeholder="예: 43">
+
+      <label>조준 감도</label>
+      <input type="number" id="baseAim" placeholder="예: 30">
+
+      <label>스코프 감도</label>
+      <input type="number" id="baseScope" placeholder="예: 30">
+
+      <label>수직 감도</label>
+      <input type="number" id="baseVertical" placeholder="예: 1.0">
+
+      <button onclick="calcReal()">계산하기</button>
+      <div id="realResult"></div>
+    </div>
+
+    <div class="explanation">
+      <h2>📐 계산 방식 설명</h2>
+      <p>이 계산기는 다음 공식을 기반으로 합니다:</p>
+      <ul>
+        <li><strong>일반 계산: (기준 DPI × 감도) ÷ 대상 DPI</strong></li>
+        <li>조준 / 스코프 감도도 동일한 방식으로 계산됩니다.</li>
+        <li>수직 감도는 고정값으로 유지됩니다.</li>
+      </ul>
+      <p>이 방식은 eDPI 기반보다 현실적인 체감 기반 감도 비교를 제공합니다.</p>
+    </div>
+  </main>
+
+  <script>
+    const dpis = [400, 800, 1200, 1600, 3200];
+
+    function calcReal() {
+      const baseDPI = parseFloat(document.getElementById("baseDPI").value);
+      const g = parseFloat(document.getElementById("baseGeneral").value);
+      const a = parseFloat(document.getElementById("baseAim").value);
+      const s = parseFloat(document.getElementById("baseScope").value);
+      const v = parseFloat(document.getElementById("baseVertical").value);
+
+      let html = "<table><tr><th>DPI</th><th>일반 감도</th><th>조준 감도</th><th>스코프 감도</th><th>수직 감도</th></tr>";
+      dpis.forEach(d => {
+        html += `<tr>
+          <td>${d}</td>
+          <td>${
+::contentReference[oaicite:0]{index=0}
+ 

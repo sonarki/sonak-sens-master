@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v1</title>
+  <title>소낙의 감도사 v2</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
@@ -90,6 +90,12 @@
       const aim = parseFloat(document.getElementById('aim').value);
       const scope = parseFloat(document.getElementById('scope').value);
 
+      // eDPI 계산
+      const eDPI_general = baseDPI * general;
+      const eDPI_vertical = baseDPI * vertical;
+      const eDPI_aim = baseDPI * aim;
+      const eDPI_scope = baseDPI * scope;
+
       let tableHTML = `
         <table>
           <tr>
@@ -102,14 +108,13 @@
       `;
 
       dpis.forEach(dpi => {
-        const factor = dpi / baseDPI;
         tableHTML += `
           <tr>
             <td>${dpi}</td>
-            <td>${(general * factor).toFixed(2)}</td>
-            <td>${(vertical * factor).toFixed(2)}</td>
-            <td>${(aim * factor).toFixed(2)}</td>
-            <td>${(scope * factor).toFixed(2)}</td>
+            <td>${(eDPI_general / dpi).toFixed(2)}</td>
+            <td>${(eDPI_vertical / dpi).toFixed(2)}</td>
+            <td>${(eDPI_aim / dpi).toFixed(2)}</td>
+            <td>${(eDPI_scope / dpi).toFixed(2)}</td>
           </tr>
         `;
       });

@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v5.1</title>
+  <title>소낙의 감도사 v5.2</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
@@ -16,24 +16,38 @@
       padding: 20px;
       text-align: center;
     }
-    section {
-      max-width: 1000px;
-      margin: 20px auto;
-      background: #fff;
+    main {
+      display: flex;
+      flex-wrap: nowrap;
+      padding: 20px;
+      gap: 20px;
+      max-width: 1400px;
+      margin: auto;
+    }
+    .sidebar, .explanation {
+      flex: 1;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .calculator {
+      flex: 2;
+      background-color: #fff;
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h2 {
-      color: #333;
       margin-top: 0;
+      color: #333;
     }
     label {
       font-weight: bold;
       display: block;
       margin-top: 10px;
     }
-    input, select, button {
+    input, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -44,97 +58,38 @@
     }
     button {
       background-color: #333;
-      color: #fff;
+      color: white;
       font-weight: bold;
       cursor: pointer;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 15px;
+      margin-top: 20px;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 8px;
+      padding: 10px;
       text-align: center;
     }
     th {
       background-color: #f0f0f0;
     }
-    .description {
-      background: #f9f9f9;
-      border-left: 4px solid #333;
-      padding: 10px;
-      margin-top: 15px;
-      font-size: 14px;
+    .note {
+      font-size: 13px;
+      color: #555;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <header>
     <h1>소낙의 감도사 🎯</h1>
-    <p>v5.1 | 조준, 스코프, 수직 포함 완전판</p>
+    <p>v5.2 | 실전 전문가용 감도 계산기</p>
   </header>
-
-  <section>
-    <h2>1️⃣ 실감형 감도 계산기</h2>
-    <label>기준 DPI</label>
-    <input type="number" id="baseDPI" placeholder="예: 400">
-
-    <label>일반 감도</label>
-    <input type="number" id="baseGeneral" placeholder="예: 43">
-
-    <label>조준 감도</label>
-    <input type="number" id="baseAim" placeholder="예: 30">
-
-    <label>스코프 감도</label>
-    <input type="number" id="baseScope" placeholder="예: 30">
-
-    <label>수직 감도</label>
-    <input type="number" id="baseVertical" placeholder="예: 1.0">
-
-    <button onclick="calcReal()">계산하기</button>
-    <div id="realResult"></div>
-
-    <div class="description">
-      🎯 기준 DPI와 감도를 기준으로 다른 DPI에서 동일한 체감을 유지하도록 감도를 계산합니다.<br>
-      공식: <strong>(기준 DPI × 감도) ÷ 대상 DPI</strong>
-    </div>
-  </section>
-
-  <section>
-    <h2>📘 감도 계산의 역사와 출처</h2>
-    <div class="description">
-      FPS 감도 계산은 <strong>2000년대 초 Counter-Strike, Quake</strong> 등에서 프로게이머들에 의해 정립되었습니다.<br>
-      이론: <strong>eDPI = DPI × 감도</strong><br>
-      출처: prosettings.net, liquipedia.net, reddit.com/r/MouseReview 등<br>
-      PUBG, Valorant, Apex 등에서도 동일한 방식이 쓰이며, 소낙의 감도사는 이를 바탕으로 구성됩니다.
-    </div>
-  </section>
-
-  <script>
-    const dpis = [400, 800, 1200, 1600, 3200];
-
-    function calcReal() {
-      const baseDPI = parseFloat(document.getElementById("baseDPI").value);
-      const g = parseFloat(document.getElementById("baseGeneral").value);
-      const a = parseFloat(document.getElementById("baseAim").value);
-      const s = parseFloat(document.getElementById("baseScope").value);
-      const v = parseFloat(document.getElementById("baseVertical").value);
-
-      let html = "<table><tr><th>DPI</th><th>일반 감도</th><th>조준 감도</th><th>스코프 감도</th><th>수직 감도</th></tr>";
-      dpis.forEach(d => {
-        html += `<tr>
-          <td>${d}</td>
-          <td>${((baseDPI * g) / d).toFixed(2)}</td>
-          <td>${((baseDPI * a) / d).toFixed(2)}</td>
-          <td>${((baseDPI * s) / d).toFixed(2)}</td>
-          <td>${v.toFixed(2)}</td>
-        </tr>`;
-      });
-      html += "</table>";
-      document.getElementById("realResult").innerHTML = html;
-    }
-  </script>
-</body>
-</html>
+  <main>
+    <div class="sidebar">
+      <h2>📘 감도 계산의 역사</h2>
+      <p>FPS 감도 계산법은 2000년대 초 <strong>Quake</strong>, <strong>Counter-Strike</strong> 등에서 시작되었습니다.<br><br>
+      <strong>eDPI = DPI × 감도</strong> 라는 개념은 프로게이머들이 일관된 마우스 이동 체감을 위해 만든 계산법입니다.<br><br>
+      PUBG, Valorant, Apex 등 주요 FPS 게임

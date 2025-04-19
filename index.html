@@ -2,39 +2,52 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>소낙의 감도사 v2.1</title>
+  <title>소낙의 감도사 v3 - 정확한 계산 기반</title>
   <style>
     body {
       font-family: 'Pretendard', sans-serif;
-      text-align: center;
-      padding: 30px;
-      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
     }
-    h1 { color: #333; }
-    .input-group, .result-table {
-      margin: 20px auto;
-      max-width: 500px;
-      text-align: left;
+    header {
+      background-color: #333;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+    .calculator, .info {
+      flex: 1 1 400px;
+      background: white;
+      margin: 10px;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     label {
       display: block;
-      margin-bottom: 5px;
+      margin-top: 10px;
       font-weight: bold;
     }
-    input {
+    input, select, button {
       width: 100%;
-      padding: 8px;
-      margin-bottom: 15px;
+      padding: 10px;
+      margin-top: 5px;
       border-radius: 6px;
       border: 1px solid #ccc;
+      box-sizing: border-box;
     }
-    select, button {
-      padding: 10px 15px;
-      border-radius: 6px;
-      border: none;
+    button {
+      background-color: #333;
+      color: white;
       font-weight: bold;
-      margin: 10px 5px;
       cursor: pointer;
+      margin-top: 20px;
     }
     table {
       width: 100%;
@@ -42,8 +55,8 @@
       margin-top: 20px;
     }
     th, td {
-      padding: 8px;
       border: 1px solid #ccc;
+      padding: 10px;
       text-align: center;
     }
     th {
@@ -52,78 +65,55 @@
   </style>
 </head>
 <body>
-  <h1>소낙의 감도사 🎯</h1>
-  <div class="input-group">
-    <label>DPI 선택</label>
-    <select id="currentDPI">
-      <option value="400">400</option>
-      <option value="800" selected>800</option>
-      <option value="1200">1200</option>
-      <option value="1600">1600</option>
-      <option value="3200">3200</option>
-    </select>
+  <header>
+    <h1>소낙의 감도사 🎯</h1>
+    <p>정확한 eDPI + Viewspeed 기반 계산</p>
+  </header>
+  <main>
+    <div class="calculator">
+      <label for="dpi">현재 DPI</label>
+      <select id="dpi">
+        <option value="400">400</option>
+        <option value="800" selected>800</option>
+        <option value="1200">1200</option>
+        <option value="1600">1600</option>
+        <option value="3200">3200</option>
+      </select>
 
-    <label>일반 감도</label>
-    <input type="number" id="general" placeholder="예: 30" />
+      <label for="sensitivity">일반 감도</label>
+      <input type="number" id="sensitivity" placeholder="예: 30">
 
-    <label>수직 감도</label>
-    <input type="number" id="vertical" placeholder="예: 0.9" />
+      <button onclick="calculate()">감도 계산하기</button>
 
-    <label>조준 감도</label>
-    <input type="number" id="aim" placeholder="예: 22" />
-
-    <label>스코프 감도</label>
-    <input type="number" id="scope" placeholder="예: 19" />
-
-    <button onclick="calculate()">감도 계산하기</button>
-  </div>
-
-  <div class="result-table" id="resultTable"></div>
-
+      <div id="result"></div>
+    </div>
+    <div class="info">
+      <h3>📘 계산 개념 설명</h3>
+      <p><strong>eDPI (Effective DPI)</strong>는 마우스 DPI와 인게임 감도의 곱으로, 실제 체감 감도를 나타냅니다.</p>
+      <p><strong>Viewspeed</strong>는 스코프를 사용할 때의 마우스 이동 감각을 보정해주는 개념으로, 일반 감도 대비 약 <strong>15 낮게</strong> 설정하는 것이 일반적입니다.</p>
+      <p>예: 400DPI에서 감도 43 → eDPI = 400 × 43 = <strong>17200</strong></p>
+      <p>이를 기준으로 800DPI에서 감도를 계산하면: <strong>17200 ÷ 800 = 21.5</strong></p>
+      <p>스코프 감도는 일반 감도에서 <strong>약 15 낮게</strong> 제안됩니다.</p>
+    </div>
+  </main>
   <script>
     const dpis = [400, 800, 1200, 1600, 3200];
 
     function calculate() {
-      const baseDPI = parseInt(document.getElementById('currentDPI').value);
-      const general = parseFloat(document.getElementById('general').value);
-      const vertical = parseFloat(document.getElementById('vertical').value);
-      const aim = parseFloat(document.getElementById('aim').value);
-      const scope = parseFloat(document.getElementById('scope').value);
+      const dpi = parseInt(document.getElementById("dpi").value);
+      const sens = parseFloat(document.getElementById("sensitivity").value);
+      const eDPI = dpi * sens;
 
-      // eDPI 기반 환산
-      const eDPI_general = baseDPI * general;
-      const eDPI_aim = baseDPI * aim;
-      const eDPI_scope = baseDPI * scope;
+      let html = '<table><tr><th>DPI</th><th>일반 감도</th><th>스코프 감도(제안)</th><th>eDPI</th></tr>';
 
-      let tableHTML = `
-        <table>
-          <tr>
-            <th>DPI</th>
-            <th>일반</th>
-            <th>수직</th>
-            <th>조준</th>
-            <th>스코프</th>
-          </tr>
-      `;
-
-      dpis.forEach(dpi => {
-        const general_converted = (eDPI_general / dpi).toFixed(2);
-        const aim_converted = (eDPI_aim / dpi).toFixed(2);
-        const scope_converted = (eDPI_scope / dpi).toFixed(2);
-
-        tableHTML += `
-          <tr>
-            <td>${dpi}</td>
-            <td>${general_converted}</td>
-            <td>${vertical.toFixed(2)}</td>
-            <td>${aim_converted}</td>
-            <td>${scope_converted}</td>
-          </tr>
-        `;
+      dpis.forEach(d => {
+        const normal = (eDPI / d).toFixed(2);
+        const scope = (normal - 15).toFixed(2);
+        html += `<tr><td>${d}</td><td>${normal}</td><td>${scope}</td><td>${Math.round(d * normal)}</td></tr>`;
       });
 
-      tableHTML += `</table>`;
-      document.getElementById('resultTable').innerHTML = tableHTML;
+      html += '</table>';
+      document.getElementById("result").innerHTML = html;
     }
   </script>
 </body>
